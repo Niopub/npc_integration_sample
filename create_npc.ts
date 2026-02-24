@@ -1,4 +1,7 @@
-import path from "node:path";
+/**
+ * Create a single NPC with random interests from corpus.
+ * Use npc.ts create for preset-based creation.
+ */
 import { env } from "./env.js";
 
 type NpcResponse = {
@@ -65,6 +68,7 @@ const GAME_STATE_CHANGE_INTERESTS_CORPUS: string[] = [
   "permadeath flag toggles raise mission stakes",
 ];
 
+/** Shuffle and pick N interests for NPC creation. */
 function pickRandomInterests(targetCount = 15): string[] {
   const shuffled = [...GAME_STATE_CHANGE_INTERESTS_CORPUS].sort(() => Math.random() - 0.5);
   return shuffled.slice(0, Math.min(targetCount, GAME_STATE_CHANGE_INTERESTS_CORPUS.length));
@@ -74,13 +78,12 @@ async function main(): Promise<void> {
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
   const product = env("PRODUCT");
   const apiKey = env("API_KEY");
-  const simId = process.argv[2]?.trim() || process.env.SIM_ID?.trim();
+  const simId = process.argv[2]?.trim();
   if (!simId) {
     throw new Error("Usage: npx tsx create_npc.ts <sim_id>");
   }
-  const npcName = process.env.NPC_NAME?.trim() || `NPC ${Date.now()}`;
-  const description =
-    process.env.NPC_DESCRIPTION?.trim() || "NPC created by integration test.";
+  const npcName = `NPC ${Date.now()}`;
+  const description = "NPC created by integration test.";
   const randomInterestsCount = 13 + Math.floor(Math.random() * 5); // 13-17 (~15)
   const interests = pickRandomInterests(randomInterestsCount);
 

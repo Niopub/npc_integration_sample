@@ -1,3 +1,4 @@
+/** List all players in a simulation. Uses API_KEY. */
 import { env } from "./env.js";
 
 type PlayerResponse = {
@@ -13,7 +14,7 @@ async function main(): Promise<void> {
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
   const product = env("PRODUCT");
   const apiKey = env("API_KEY");
-  const simId = process.argv[2]?.trim() || process.env.SIM_ID?.trim();
+  const simId = process.argv[2]?.trim();
   if (!simId) {
     throw new Error("Usage: npx tsx get_players.ts <sim_id>");
   }

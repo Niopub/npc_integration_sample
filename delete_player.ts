@@ -1,3 +1,4 @@
+/** Delete a player. Uses API_KEY. */
 import { env } from "./env.js";
 
 type PlayerResponse = {
@@ -14,7 +15,7 @@ async function main(): Promise<void> {
   const product = env("PRODUCT");
   const apiKey = env("API_KEY");
   const playerId = process.argv[2]?.trim();
-  const simId = process.argv[3]?.trim() || process.env.SIM_ID?.trim();
+  const simId = process.argv[3]?.trim();
   if (!playerId || !simId) {
     throw new Error("Usage: npx tsx delete_player.ts <player_id> <sim_id>");
   }

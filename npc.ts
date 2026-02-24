@@ -1,6 +1,11 @@
+/**
+ * NPC CRUD: create (from preset), update, list, get, delete.
+ * NPCs are characters with description and interests.
+ */
 import path from "node:path";
 import fs from "node:fs";
 import { env } from "./env.js";
+import { parseBody } from "./util.js";
 
 type NpcResponse = {
   npc_id?: string;
@@ -22,8 +27,8 @@ type NpcProfile = {
 function usage(): string {
   return [
     "Usage:",
-    "  npx tsx npc.ts create <sim_id> [profile_name]",
-    "  npx tsx npc.ts update <npc_id> [profile_name]",
+    "  npx tsx npc.ts create <sim_id> [pick a value from pre-created profiles in npc_interests.json]",
+    "  npx tsx npc.ts update <npc_id> [pick a value from pre-created profiles in npc_interests.json]",
     "  npx tsx npc.ts list <sim_id>",
     "  npx tsx npc.ts get <npc_id>",
     "  npx tsx npc.ts delete <npc_id>",
@@ -34,6 +39,7 @@ function dataPath(filename: string): string {
   return path.resolve(__dirname, "data", filename);
 }
 
+/** Load NPC preset profiles from data/npc_interests.json. */
 function loadNpcProfiles(): NpcProfile[] {
   const raw = fs.readFileSync(dataPath("npc_interests.json"), "utf8");
   return JSON.parse(raw) as NpcProfile[];
@@ -47,14 +53,6 @@ function printNpcProfileOptions(profiles: NpcProfile[]): void {
   console.log("Available NPC profiles:");
   for (const p of profiles) {
     console.log(`- ${p.name}`);
-  }
-}
-
-async function parseBody(raw: string): Promise<unknown> {
-  try {
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return raw;
   }
 }
 
@@ -84,7 +82,7 @@ async function main(): Promise<void> {
   let payload: Record<string, unknown> | undefined;
 
   if (op === "create") {
-    const simId = arg || process.env.SIM_ID?.trim();
+    const simId = arg;
     if (!simId) throw new Error("create requires <sim_id>\n\n" + usage());
     const profileName = process.argv.slice(4).join(" ").trim();
     const profiles = loadNpcProfiles();
@@ -127,7 +125,7 @@ async function main(): Promise<void> {
       interests: profile.interests,
     };
   } else if (op === "list") {
-    const simId = arg || process.env.SIM_ID?.trim();
+    const simId = arg;
     if (!simId) throw new Error("list requires <sim_id>\n\n" + usage());
     url = `${baseUrl}/simulation/${simId}/npcs`;
   } else if (op === "get") {

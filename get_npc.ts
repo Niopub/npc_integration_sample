@@ -1,3 +1,4 @@
+/** Fetch a single NPC by id. Uses API_KEY. */
 import { env } from "./env.js";
 
 type NpcResponse = {

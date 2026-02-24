@@ -1,6 +1,11 @@
+/**
+ * Simulation CRUD: create, list, get, lore (apply preset), delete.
+ * Simulations are game worlds or app contexts.
+ */
 import path from "node:path";
 import fs from "node:fs";
 import { env } from "./env.js";
+import { parseBody } from "./util.js";
 
 type SimulationResponse = {
   sim_id?: string;
@@ -18,6 +23,7 @@ function dataPath(filename: string): string {
   return path.resolve(__dirname, "data", filename);
 }
 
+/** Load lore presets from data/simulation_lores.json. */
 function loadSimulationLores(): SimulationLoreProfile[] {
   const raw = fs.readFileSync(dataPath("simulation_lores.json"), "utf8");
   return JSON.parse(raw) as SimulationLoreProfile[];
@@ -36,17 +42,9 @@ function usage(): string {
     "  npx tsx simulation.ts create <name>",
     "  npx tsx simulation.ts list",
     "  npx tsx simulation.ts get <sim_id>",
-    "  npx tsx simulation.ts lore <sim_id> [lore_name]",
+    "  npx tsx simulation.ts lore <sim_id> [pick a value from pre-created profiles in simulation_lores.json]",
     "  npx tsx simulation.ts delete <sim_id>",
   ].join("\n");
-}
-
-async function parseBody(raw: string): Promise<unknown> {
-  try {
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return raw;
-  }
 }
 
 async function main(): Promise<void> {
@@ -76,7 +74,7 @@ async function main(): Promise<void> {
     if (!arg) throw new Error("get requires <sim_id>\n\n" + usage());
     url = `${baseUrl}/simulation/${arg}`;
   } else if (op === "lore") {
-    const simId = arg || process.env.SIM_ID?.trim();
+    const simId = arg;
     if (!simId) throw new Error("lore requires <sim_id>\n\n" + usage());
     const loreName = process.argv.slice(4).join(" ").trim();
     const lores = loadSimulationLores();
@@ -114,7 +112,7 @@ async function main(): Promise<void> {
   });
   const elapsed = Date.now() - t0;
   const raw = await response.text();
-  const body = await parseBody(raw);
+  const body = parseBody(raw);
 
   if (!response.ok) {
     console.error(`simulation ${op} failed`);

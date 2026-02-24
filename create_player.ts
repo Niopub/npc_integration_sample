@@ -1,3 +1,4 @@
+/** Create a player session. Uses DISTR_KEY. */
 import { env } from "./env.js";
 
 type PlayerResponse = {
@@ -13,11 +14,11 @@ async function main(): Promise<void> {
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
   const product = env("PRODUCT");
   const distrKey = env("DISTR_KEY");
-  const simId = process.argv[2]?.trim() || process.env.SIM_ID?.trim();
+  const simId = process.argv[2]?.trim();
   if (!simId) {
     throw new Error("Usage: npx tsx create_player.ts <sim_id> [expire_min]");
   }
-  const expireMinRaw = process.argv[3]?.trim() || process.env.PLAYER_EXPIRE_MIN?.trim();
+  const expireMinRaw = process.argv[3]?.trim();
 
   const payload: { sim_id: string; expire_min?: number } = { sim_id: simId };
   if (expireMinRaw) {

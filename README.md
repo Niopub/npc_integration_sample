@@ -1,6 +1,6 @@
 # NPC Integration Sample
 
-Sample integration for the [Niopub](https://niopub.com) Simulation API — simulations, NPCs, players, and stream events.
+Sample integration for the [Niopub](https://niopub.com) Simulation API — simulations, NPCs, players, and stream events. API docs: [niopub.com/simulations/](https://niopub.com/simulations/)
 
 ## Setup
 
@@ -8,6 +8,18 @@ Sample integration for the [Niopub](https://niopub.com) Simulation API — simul
 npm install
 cp .env.example .env
 # Edit .env with your API keys from niopub.com
+```
+
+### AI skill (optional)
+
+To add the Niopub API reference as a local skill for your AI editor:
+
+```bash
+# Claude Code
+cp -r .claude/skills/nio-npc ~/.claude/skills/
+
+# Cursor
+cp -r .claude/skills/nio-npc ~/.cursor/skills/
 ```
 
 ## Flow order
@@ -19,13 +31,7 @@ cp .env.example .env
 
 ## Prerequisites
 
-- `.env` with:
-  - `BASE_URL`
-  - `PRODUCT`
-  - `API_KEY` (simulation + npc + player list/get/delete)
-  - `DISTR_KEY` (player create + stream event write)
-  - Optional: `SIM_ID`, `NPC_NAME`, `NPC_DESCRIPTION`, `PLAYER_EXPIRE_MIN`
-- `BASE_URL` defaults to `https://n10s.net` if unset
+- `.env` with: `PRODUCT`, `API_KEY`, `DISTR_KEY`
 
 ## Quick examples
 

@@ -1,4 +1,9 @@
+/**
+ * Player CRUD: create, list, get, delete.
+ * Players are sessions within a simulation. Create uses DISTR_KEY; list/get/delete use API_KEY.
+ */
 import { env } from "./env.js";
+import { parseBody } from "./util.js";
 
 type PlayerResponse = {
   player_id?: string;
@@ -16,14 +21,6 @@ function usage(): string {
     "  npx tsx player.ts get <player_id> <sim_id>",
     "  npx tsx player.ts delete <player_id> <sim_id>",
   ].join("\n");
-}
-
-async function parseBody(raw: string): Promise<unknown> {
-  try {
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return raw;
-  }
 }
 
 function printPlayer(player: PlayerResponse): void {
@@ -54,9 +51,9 @@ async function main(): Promise<void> {
   let auth = apiKey;
 
   if (op === "create") {
-    const simId = process.argv[3]?.trim() || process.env.SIM_ID?.trim();
+    const simId = process.argv[3]?.trim();
     if (!simId) throw new Error("create requires <sim_id>\n\n" + usage());
-    const expireMinRaw = process.argv[4]?.trim() || process.env.PLAYER_EXPIRE_MIN?.trim();
+    const expireMinRaw = process.argv[4]?.trim();
     payload = { sim_id: simId };
     if (expireMinRaw) {
       const expireMin = Number(expireMinRaw);
@@ -69,18 +66,18 @@ async function main(): Promise<void> {
     method = "POST";
     auth = distrKey;
   } else if (op === "list") {
-    const simId = process.argv[3]?.trim() || process.env.SIM_ID?.trim();
+    const simId = process.argv[3]?.trim();
     if (!simId) throw new Error("list requires <sim_id>\n\n" + usage());
     url = `${baseUrl}/user/players?sim_id=${encodeURIComponent(simId)}`;
   } else if (op === "get") {
     const playerId = process.argv[3]?.trim();
-    const simId = process.argv[4]?.trim() || process.env.SIM_ID?.trim();
+    const simId = process.argv[4]?.trim();
     if (!playerId || !simId) throw new Error("get requires <player_id> <sim_id>\n\n" + usage());
     url = `${baseUrl}/user/player/${playerId}?sim_id=${encodeURIComponent(simId)}`;
     auth = apiKey;
   } else if (op === "delete") {
     const playerId = process.argv[3]?.trim();
-    const simId = process.argv[4]?.trim() || process.env.SIM_ID?.trim();
+    const simId = process.argv[4]?.trim();
     if (!playerId || !simId) throw new Error("delete requires <player_id> <sim_id>\n\n" + usage());
     url = `${baseUrl}/user/player`;
     method = "DELETE";
@@ -101,7 +98,7 @@ async function main(): Promise<void> {
   });
   const elapsed = Date.now() - t0;
   const raw = await response.text();
-  const body = await parseBody(raw);
+  const body = parseBody(raw);
 
   if (!response.ok) {
     console.error(`player ${op} failed`);

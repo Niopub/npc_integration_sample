@@ -1,7 +1,11 @@
+/**
+ * Stream events: state (game events), ask (NPC questions), stream (WebSocket).
+ * POST /stream/event for state/ask; WebSocket for high-frequency stream mode.
+ */
 import path from "node:path";
 import fs from "node:fs";
 import WebSocket from "ws";
-import { env, optionalEnv } from "./env.js";
+import { env } from "./env.js";
 
 type StateEventResponse = {
   event_id?: string;
@@ -29,23 +33,17 @@ function usage(): string {
   return [
     "Usage:",
     "  npx tsx event.ts state <player_id> <sim_id> <event_text> [event_id]",
-    "  npx tsx event.ts ask <player_id> <sim_id> <ask_text> [npc_id] [ask_id]",
+    "  npx tsx event.ts ask <player_id> <sim_id> <ask_text> <npc_id> [ask_id]",
     "  npx tsx event.ts stream <player_id> <sim_id> [interval_ms]",
     "",
-    "stream mode connects via WebSocket and sends random game events from data/game_events.json.",
-    "If [npc_id] is omitted for ask, NPC_ID from .env is used.",
-    "interval_ms defaults to 200. Press Ctrl+C to stop and print stats.",
+    "stream: WebSocket mode, sends random events from data/game_events.json.",
+    "interval_ms defaults to 200. Ctrl+C to stop and print stats.",
   ].join("\n");
 }
 
-async function parseBody(raw: string): Promise<unknown> {
-  try {
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return raw;
-  }
-}
+import { parseBody } from "./util.js";
 
+/** Load game event strings from data file for stream mode. */
 function loadGameEvents(): string[] {
   const dataPath = path.resolve(__dirname, "data", "game_events.json");
   const raw = fs.readFileSync(dataPath, "utf8");
@@ -56,10 +54,12 @@ function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
+/** Convert HTTP(S) URL to WS(S) for WebSocket. */
 function httpToWs(url: string): string {
   return url.replace(/^http:\/\//, "ws://").replace(/^https:\/\//, "wss://");
 }
 
+/** WebSocket stream: connect, send random events at interval, track stats. */
 async function runStream(
   baseUrl: string,
   product: string,
@@ -84,7 +84,6 @@ async function runStream(
 
   let sent = 0;
   let errors = 0;
-  let authed = false;
   let timer: ReturnType<typeof setInterval> | null = null;
   const t0 = Date.now();
 
@@ -179,7 +178,7 @@ async function sendStreamEvent(
   });
   const elapsed = Date.now() - t0;
   const raw = await response.text();
-  const body = await parseBody(raw);
+  const body = parseBody(raw);
   return { status: response.status, statusText: response.statusText, body, elapsed };
 }
 
@@ -195,7 +194,7 @@ async function main(): Promise<void> {
   const distrKey = env("DISTR_KEY");
 
   const playerId = process.argv[3]?.trim();
-  const simId = process.argv[4]?.trim() || process.env.SIM_ID?.trim();
+  const simId = process.argv[4]?.trim();
   if (!playerId || !simId) {
     throw new Error(`Missing required ids.\n\n${usage()}`);
   }
@@ -227,13 +226,13 @@ async function main(): Promise<void> {
     if (eventId) payload.event_id = eventId;
   } else if (op === "ask") {
     const askText = process.argv[5]?.trim();
-    const npcId = process.argv[6]?.trim() || optionalEnv("NPC_ID");
+    const npcId = process.argv[6]?.trim();
     const askId = process.argv[7]?.trim();
     if (!askText) {
       throw new Error(`ask requires <ask_text>\n\n${usage()}`);
     }
     if (!npcId) {
-      throw new Error(`ask requires [npc_id] or NPC_ID in .env\n\n${usage()}`);
+      throw new Error(`ask requires <npc_id>\n\n${usage()}`);
     }
     payload = {
       player_id: playerId,

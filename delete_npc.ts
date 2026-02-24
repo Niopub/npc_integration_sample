@@ -1,3 +1,4 @@
+/** Delete an NPC. Uses API_KEY. */
 import { env } from "./env.js";
 
 type NpcResponse = {

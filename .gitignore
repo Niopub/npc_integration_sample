@@ -1,5 +1,6 @@
 node_modules/
 .env
+.env_backup
 .DS_Store
 *.log
 .claude/settings.local.json

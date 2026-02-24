@@ -1,3 +1,4 @@
+/** Fetch a single player by id and sim_id. Uses API_KEY. */
 import { env } from "./env.js";
 
 type PlayerResponse = {
@@ -12,9 +13,9 @@ type PlayerResponse = {
 async function main(): Promise<void> {
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
   const product = env("PRODUCT");
-  const distrKey = env("DISTR_KEY");
+  const apiKey = env("API_KEY");
   const playerId = process.argv[2]?.trim();
-  const simId = process.argv[3]?.trim() || process.env.SIM_ID?.trim();
+  const simId = process.argv[3]?.trim();
   if (!playerId || !simId) {
     throw new Error("Usage: npx tsx get_player.ts <player_id> <sim_id>");
   }
@@ -25,7 +26,7 @@ async function main(): Promise<void> {
     {
     method: "GET",
     headers: {
-      authorization: `Bearer ${distrKey}`,
+      authorization: `Bearer ${apiKey}`,
       product,
     },
     }
