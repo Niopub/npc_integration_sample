@@ -59,8 +59,8 @@ npx tsx event.ts state pl123... si123... "player entered dark forest zone"
 npx tsx event.ts ask pl123... si123... npc123... "what should i do next?"
 
 # 4b) stream event - WebSocket (random events from data/game_events.json)
-npx tsx event.ts stream pl123... si123...         # default 200ms interval
-npx tsx event.ts stream pl123... si123... 50      # 50ms interval (~17/s)
+npx tsx event.ts stream pl123... si123...         # default 3000ms (~20/min)
+npx tsx event.ts stream pl123... si123... 1500    # 1500ms (~40/min, warns)
 ```
 
 ## Data files

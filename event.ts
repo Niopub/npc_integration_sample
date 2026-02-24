@@ -37,7 +37,8 @@ function usage(): string {
     "  npx tsx event.ts stream <player_id> <sim_id> [interval_ms]",
     "",
     "stream: WebSocket mode, sends random events from data/game_events.json.",
-    "interval_ms defaults to 200. Ctrl+C to stop and print stats.",
+    "interval_ms defaults to 3000 (20/min). Rate limit: 60/min per player.",
+    "Ctrl+C to stop and print stats.",
   ].join("\n");
 }
 
@@ -200,9 +201,16 @@ async function main(): Promise<void> {
   }
 
   if (op === "stream") {
-    const intervalMs = parseInt(process.argv[5]?.trim() || "200", 10);
+    const intervalMs = parseInt(process.argv[5]?.trim() || "3000", 10);
     if (isNaN(intervalMs) || intervalMs < 1) {
       throw new Error("interval_ms must be a positive integer");
+    }
+    if (intervalMs < 2000) {
+      console.warn(
+        `Warning: interval ${intervalMs}ms exceeds ~30 events/min. ` +
+          `WS rate limit is 60/min (2 per 2s window). ` +
+          `You may hit 429 errors at high rates.`
+      );
     }
     await runStream(baseUrl, product, distrKey, playerId, simId, intervalMs);
     return;
