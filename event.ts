@@ -63,7 +63,6 @@ function httpToWs(url: string): string {
 /** WebSocket stream: connect, send random events at interval, track stats. */
 async function runStream(
   baseUrl: string,
-  product: string,
   distrKey: string,
   playerId: string,
   simId: string,
@@ -78,7 +77,6 @@ async function runStream(
 
   const ws = new WebSocket(wsUrl, {
     headers: {
-      product,
       authorization: `Bearer ${distrKey}`,
     },
   });
@@ -163,7 +161,6 @@ async function runStream(
 
 async function sendStreamEvent(
   url: string,
-  product: string,
   distrKey: string,
   payload: StreamEventRequest
 ): Promise<{ status: number; statusText: string; body: unknown; elapsed: number }> {
@@ -173,7 +170,6 @@ async function sendStreamEvent(
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${distrKey}`,
-      product,
     },
     body: JSON.stringify(payload),
   });
@@ -191,7 +187,6 @@ async function main(): Promise<void> {
   }
 
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
-  const product = env("PRODUCT");
   const distrKey = env("DISTR_KEY");
 
   const playerId = process.argv[3]?.trim();
@@ -212,7 +207,7 @@ async function main(): Promise<void> {
           `You may hit 429 errors at high rates.`
       );
     }
-    await runStream(baseUrl, product, distrKey, playerId, simId, intervalMs);
+    await runStream(baseUrl, distrKey, playerId, simId, intervalMs);
     return;
   }
 
@@ -254,7 +249,7 @@ async function main(): Promise<void> {
     throw new Error(`Unknown operation: ${op}\n\n${usage()}`);
   }
 
-  const result = await sendStreamEvent(url, product, distrKey, payload);
+  const result = await sendStreamEvent(url, distrKey, payload);
   if (result.status < 200 || result.status >= 300) {
     console.error(`stream event ${op} failed`);
     console.error({

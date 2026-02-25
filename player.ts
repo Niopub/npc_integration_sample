@@ -41,7 +41,6 @@ async function main(): Promise<void> {
   }
 
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
-  const product = env("PRODUCT");
   const apiKey = env("API_KEY");
   const distrKey = env("DISTR_KEY");
 
@@ -92,7 +91,6 @@ async function main(): Promise<void> {
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${auth}`,
-      product,
     },
     body: payload ? JSON.stringify(payload) : undefined,
   });

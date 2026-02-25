@@ -18,11 +18,10 @@ Before making any API call, confirm these are set (e.g. in `.env` or shell envir
 | Var | Required | Purpose |
 |-----|----------|---------|
 | `BASE_URL` | yes | API base (e.g. `https://n10s.net`) |
-| `NIO_PRODUCT` | yes | Your product ID |
 | `API_KEY` | yes | Auth for simulation, NPC, and player read/delete |
 | `DISTR_KEY` | yes | Auth for player create and all stream events |
 
-If any are missing, ask the user to provide them. Keys and product ID come from support@niopub.com.
+If any are missing, ask the user to provide them. Keys come from support@niopub.com.
 
 ## Auth
 
@@ -31,7 +30,6 @@ Every request requires these headers:
 ```
 Authorization: Bearer <API_KEY or DISTR_KEY>
 Content-Type: application/json
-Product: <NIO_PRODUCT>
 ```
 
 **API_KEY** — simulation CRUD, NPC CRUD, player list/get/delete.
@@ -137,7 +135,6 @@ WSS {BASE_URL}/stream/event/ws/{sim_id}/{player_id}
 
 Headers:
   Authorization: Bearer <DISTR_KEY>
-  Product: <NIO_PRODUCT>
 ```
 
 **Send state:** `{ "event_kind": "state", "event": "<text>" }`

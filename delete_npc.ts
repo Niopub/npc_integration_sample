@@ -14,7 +14,6 @@ type NpcResponse = {
 
 async function main(): Promise<void> {
   const baseUrl = env("BASE_URL").replace(/\/$/, "");
-  const product = env("PRODUCT");
   const apiKey = env("API_KEY");
   const npcId = process.argv[2]?.trim();
   if (!npcId) {
@@ -27,7 +26,6 @@ async function main(): Promise<void> {
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${apiKey}`,
-      product,
     },
     body: JSON.stringify({ npc_id: npcId }),
   });

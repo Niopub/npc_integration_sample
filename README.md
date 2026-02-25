@@ -31,7 +31,7 @@ cp -r .claude/skills/nio-npc ~/.cursor/skills/
 
 ## Prerequisites
 
-- `.env` with: `PRODUCT`, `API_KEY`, `DISTR_KEY`
+- `.env` with: `API_KEY`, `DISTR_KEY`
 
 ## Quick examples
 
