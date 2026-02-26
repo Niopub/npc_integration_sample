@@ -64,7 +64,7 @@ Characters inside a simulation with personality, description, and interests. The
 | Method | Path | Auth | Body |
 |--------|------|------|------|
 | POST | `/npc` | API_KEY | see below |
-| GET | `/simulation/{sim_id}/npcs` | API_KEY | — (lists all in sim) |
+| GET | `/npcs/{sim_id}` | API_KEY | — (lists all in sim) |
 | GET | `/npc/{npc_id}` | API_KEY | — |
 | PUT | `/npc/{npc_id}` | API_KEY | `{ "description?", "interests?" }` |
 | DELETE | `/npc` | API_KEY | `{ "npc_id": "<string>" }` |
@@ -75,11 +75,11 @@ Characters inside a simulation with personality, description, and interests. The
   "sim_id": "<string>",
   "npc_name": "<string>",
   "description": "<character personality, role, behavior>",
-  "interests": ["<5 phrases, 5-8 words each>"]
+  "interests": ["<up to 5 phrases, 5-8 words each>"]
 }
 ```
 
-Response shape: `{ "npc_id", "sim_id", "description", "curr_interest_raw", "creation_time", "update_time" }`
+Response shape: `{ "npc_name", "npc_id", "sim_id", "description", "curr_interest_raw", "creation_time", "update_time" }`
 
 ## Players
 

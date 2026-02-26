@@ -2,12 +2,12 @@
 import { env } from "./env.js";
 
 type NpcResponse = {
+  npc_name?: string;
   npc_id?: string;
   sim_id?: string;
-  owner_id?: string;
-  curr_interest_raw?: string;
-  curr_interest_emb?: string;
+  internal_id?: string;
   description?: string;
+  curr_interest_raw?: string[];
   creation_time?: number;
   update_time?: number;
 };
@@ -21,7 +21,7 @@ async function main(): Promise<void> {
   }
 
   const t0 = Date.now();
-  const response = await fetch(`${baseUrl}/simulation/${simId}/npcs`, {
+  const response = await fetch(`${baseUrl}/npcs/${simId}`, {
     method: "GET",
     headers: {
       authorization: `Bearer ${apiKey}`,
@@ -36,7 +36,7 @@ async function main(): Promise<void> {
   } catch {}
 
   if (!response.ok) {
-    console.error("GET /simulation/{sim_id}/npcs failed");
+    console.error("GET /npcs/{sim_id} failed");
     console.error({
       status: response.status,
       statusText: response.statusText,
@@ -46,17 +46,14 @@ async function main(): Promise<void> {
   }
 
   const npcs = body as NpcResponse[];
-  console.log("GET /simulation/{sim_id}/npcs success");
+  console.log("GET /npcs/{sim_id} success");
   console.log(`API response time: ${elapsed}ms`);
   console.log(`Count: ${npcs.length}`);
   for (const n of npcs) {
     console.log({
+      npc_name: n.npc_name,
       npc_id: n.npc_id,
       sim_id: n.sim_id,
-      owner_id: n.owner_id,
-      curr_interest_raw: n.curr_interest_raw,
-      curr_interest_emb: n.curr_interest_emb,
-      description: n.description,
       creation_time: n.creation_time,
       update_time: n.update_time,
     });

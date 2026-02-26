@@ -8,12 +8,12 @@ import { env } from "./env.js";
 import { parseBody } from "./util.js";
 
 type NpcResponse = {
+  npc_name?: string;
   npc_id?: string;
   sim_id?: string;
-  owner_id?: string;
-  curr_interest_raw?: string;
-  curr_interest_emb?: string;
+  internal_id?: string;
   description?: string;
+  curr_interest_raw?: string[];
   creation_time?: number;
   update_time?: number;
 };
@@ -58,6 +58,7 @@ function printNpcProfileOptions(profiles: NpcProfile[]): void {
 
 function printNpc(npc: NpcResponse): void {
   console.log({
+    npc_name: npc.npc_name,
     npc_id: npc.npc_id,
     sim_id: npc.sim_id,
     creation_time: npc.creation_time,
@@ -126,7 +127,7 @@ async function main(): Promise<void> {
   } else if (op === "list") {
     const simId = arg;
     if (!simId) throw new Error("list requires <sim_id>\n\n" + usage());
-    url = `${baseUrl}/simulation/${simId}/npcs`;
+    url = `${baseUrl}/npcs/${simId}`;
   } else if (op === "get") {
     if (!arg) throw new Error("get requires <npc_id>\n\n" + usage());
     url = `${baseUrl}/npc/${arg}`;

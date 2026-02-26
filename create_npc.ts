@@ -5,12 +5,12 @@
 import { env } from "./env.js";
 
 type NpcResponse = {
+  npc_name?: string;
   npc_id?: string;
   sim_id?: string;
-  owner_id?: string;
-  curr_interest_raw?: string;
-  curr_interest_emb?: string;
+  internal_id?: string;
   description?: string;
+  curr_interest_raw?: string[];
   creation_time?: number;
   update_time?: number;
 };
@@ -83,8 +83,7 @@ async function main(): Promise<void> {
   }
   const npcName = `NPC ${Date.now()}`;
   const description = "NPC created by integration test.";
-  const randomInterestsCount = 13 + Math.floor(Math.random() * 5); // 13-17 (~15)
-  const interests = pickRandomInterests(randomInterestsCount);
+  const interests = pickRandomInterests(5); // max 5, each 5-8 words
 
   const payload = {
     sim_id: simId,
@@ -126,12 +125,11 @@ async function main(): Promise<void> {
   console.log("POST /npc success");
   console.log(`API response time: ${elapsed}ms`);
   console.log({
+    npc_name: npc.npc_name,
     npc_id: npc.npc_id,
     sim_id: npc.sim_id,
-    owner_id: npc.owner_id,
-    curr_interest_raw: npc.curr_interest_raw,
-    curr_interest_emb: npc.curr_interest_emb,
     description: npc.description,
+    curr_interest_raw: npc.curr_interest_raw,
     creation_time: npc.creation_time,
     update_time: npc.update_time,
   });
