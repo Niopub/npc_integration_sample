@@ -14,7 +14,7 @@ Connect players to AI companions that understand context, remember state, and re
 | `DISTR_KEY` | yes | Auth for player create and all stream events |
 | `SIM_ID` | yes | Simulation to connect players to |
 
-If missing, ask the user to provide them. Keys come from support@niopub.com. The `SIM_ID` is obtained after creating a simulation via the admin API.
+If missing, ask the user to provide them. Keys are created by logging in at [niopub.com/simulations](https://niopub.com/simulations/). The `SIM_ID` is obtained after creating a simulation via the admin API.
 
 ## API Base
 

@@ -15,7 +15,7 @@ Create and manage simulations, NPCs, and player sessions. This skill covers the 
 |-----|----------|---------|
 | `API_KEY` | yes | Auth for simulation, NPC, and player read/delete |
 
-If missing, ask the user to provide it. Keys come from support@niopub.com.
+If missing, ask the user to provide it. Keys are created by logging in at [niopub.com/simulations](https://niopub.com/simulations/).
 
 ## API Base
 
